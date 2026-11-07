@@ -40,9 +40,20 @@ def home_view(request):
 
 
 def course_list_view(request):
-    """Renders the complete list of offered courses."""
+    """Renders the list of offered courses, optionally filtered by ?q=."""
+    query = request.GET.get('q', '').strip()
+    courses = COURSES_DATA
+
+    if query:
+        q = query.lower()
+        courses = [
+            c for c in COURSES_DATA
+            if q in c['title'].lower() or q in c['code'].lower()
+        ]
+
     context = {
-        'courses': COURSES_DATA,
+        'courses': courses,
+        'query': query,
     }
     return render(request, 'catalog/course_list.html', context)
 
